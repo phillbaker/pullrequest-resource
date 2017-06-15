@@ -109,12 +109,21 @@ git config --get pullrequest.url        # returns the URL to the pull request
 git config --get pullrequest.branch     # returns the branch name used for the pull request
 git config --get pullrequest.id         # returns the ID number of the PR
 git config --get pullrequest.basebranch # returns the base branch used for the pull request
+git config --get pullrequest.files      # returns the files in the pull request
+```
+
+The included metadata can be used in the test script, for example:
+```
+RELAVANT_DIR=$(git config pullrequest.files |  jq 'map(select(. | startswith("src/") )) | length')
+RELAVANT_FILES=$(git config pullrequest.files |  jq 'map(select(. | endswith("js") )) | length')
+
+if [ $RELAVANT_FILES -eq 0 ]; then echo 'skipping'; exit 0; fi
 ```
 
 #### Parameters
 
 * `git.depth`: *Optional.* If a positive integer is given, *shallow* clone the
-  repository using the `--depth` option. 
+  repository using the `--depth` option.
 
 * `git.submodules`: *Optional*, default `all`. If `none`, submodules will not be
   fetched. If specified as a list of paths, only the given paths will be
@@ -142,7 +151,7 @@ Set the status message for `concourse-ci` context on specified pull request.
 
 ** EXPERIMENTAL **
 
-These are experimental features according to [Github documentation](https://developer.github.com/v3/pulls/#merge-a-pull-request-merge-button). 
+These are experimental features according to [Github documentation](https://developer.github.com/v3/pulls/#merge-a-pull-request-merge-button).
 
 * `merge.method`: *Optional.* Use this to merge the PR into the target branch of the PR. There are three available merge methods -- `merge`, `squash`, or `rebase`. Please this [doc](https://developer.github.com/changes/2016-09-26-pull-request-merge-api-update/) for more information.
 

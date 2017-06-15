@@ -33,6 +33,7 @@ module Commands
           git config --add pullrequest.id #{pr['number']} 1>&2
           git config --add pullrequest.branch #{pr['head']['ref']} 1>&2
           git config --add pullrequest.basebranch #{pr['base']['ref']} 1>&2
+          git config --add pullrequest.files #{file_paths.to_json} 1>&2
         BASH
 
         case input.params.git.submodules
@@ -55,6 +56,14 @@ module Commands
 
     def pr
       @pr ||= Octokit.pull_request(input.source.repo, input.version.pr)
+    end
+
+    def files
+      @files ||= Octokit.pull_request_files(input.source.repo, input.version.pr)
+    end
+
+    def file_paths
+      files.map{ |f| f['filename'] }
     end
 
     def uri
